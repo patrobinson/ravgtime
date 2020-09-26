@@ -1,6 +1,7 @@
 use structopt::StructOpt;
 use std::process::{Command, Stdio};
 use std::time::Instant;
+use std::collections::HashMap;
 
 #[derive(StructOpt, PartialEq, Debug)]
 struct Opt {
@@ -61,7 +62,7 @@ fn main() {
         ticks[p95_index.ceil() as usize]
     };
 
-    println!("Total time (ms): {}", sum);
+    println!("Total time: {}ms", sum);
     println!("Repetitions: {}", opt.repetitions);
     println!("Average time: {}ms", avg);
     println!("Min: {}ms", min.unwrap());
@@ -69,6 +70,37 @@ fn main() {
     println!("Standard deviation: {}", std_dev);
     println!("p95: {}ms", p95);
     println!("p99: {}ms", p99);
+
+    if opt.histogram {
+        let rounding_quotient = match *min.unwrap() {
+            0..=100_000 => 1,
+            100_001..=1_000_000 => 10,
+            1_000_001..=std::u128::MAX => 100,
+        };
+        let mut frequencies: HashMap<u128, u128> = HashMap::new();
+        let mut max_freq = 0;
+        for tick in &mut ticks {
+            let rounded_time = *tick / rounding_quotient;
+            let mut i = *frequencies.get(&rounded_time).unwrap_or(&0);
+            i += 1;
+            frequencies.insert(rounded_time, i);
+            if i >= max_freq {
+                max_freq = i;
+            }
+        }
+        let mut histogram: HashMap<u128, u128> = HashMap::new();
+        for (bin,count) in &mut frequencies {
+            histogram.insert(*bin, *count);
+        }
+
+        println!("Histogram:");
+        println!("time:	count	normalized bar");
+        for (rounded_time,count) in &mut histogram {
+            let msecs = *rounded_time * rounding_quotient;
+            let bars = "#".repeat((*count * 40 / max_freq) as usize);
+            println!("{}ms	{}	{}", msecs, *count, bars)
+        }
+    }
 }
 
 fn run_command(cmd: &Vec<String>, quiet: bool) -> u128 {
