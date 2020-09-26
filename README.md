@@ -8,3 +8,4 @@ Arguments:
 `-r` Number of times to run a command.
 `-q` Pipe command stdout and stderr to `/dev/null`.
 `-h` Display a histogram.
+`-c` Run commands concurrently.
