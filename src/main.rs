@@ -37,9 +37,11 @@ fn main() {
         sum += *tick;
         sum_square += *tick * *tick;
     }
+    let min = ticks.first();
+    let max = ticks.last();
     let avg = sum / opt.repetitions as u128;
     // Do I risk loosing some accuracy by casting to f64?
-    let std_dev = ((sum_square / opt.repetitions as u128 - avg * avg) as f64).sqrt();
+    let std_dev = ((sum_square / opt.repetitions as u128 - avg * avg) as f32).sqrt();
 
     let p95_index = 0.95 * opt.repetitions as f32 - 1.0;
     let p99_index = 0.99 * opt.repetitions as f32 - 1.0;
@@ -62,6 +64,8 @@ fn main() {
     println!("Total time (ms): {}", sum);
     println!("Repetitions: {}", opt.repetitions);
     println!("Average time: {}ms", avg);
+    println!("Min: {}ms", min.unwrap());
+    println!("Max: {}ms", max.unwrap());
     println!("Standard deviation: {}", std_dev);
     println!("p95: {}ms", p95);
     println!("p99: {}ms", p99);
