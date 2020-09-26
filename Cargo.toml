@@ -1,5 +1,5 @@
 [package]
-name = "ravgtime"
+name = "avgtime"
 version = "0.1.0"
 authors = ["Patrick Robinson <therealpatrobinson@gmail.com>"]
 edition = "2018"
