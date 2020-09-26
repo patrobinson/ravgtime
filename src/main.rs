@@ -2,15 +2,19 @@ use structopt::StructOpt;
 use std::process::{Command, Stdio};
 use std::time::Instant;
 use std::collections::HashMap;
+use threadpool::ThreadPool;
+use std::sync::mpsc::channel;
 
 #[derive(StructOpt, PartialEq, Debug)]
 struct Opt {
     #[structopt(short, required=false, default_value="1")]
-    repetitions: u32,
+	repetitions: u32,
+	#[structopt(short, required=false, default_value="1")]
+	concurrency: u32,
     #[structopt(short)]
     quiet: bool,
     #[structopt(short)]
-    histogram: bool,
+	histogram: bool,
     #[structopt(subcommand)]
     command: Subcommands,
 }
@@ -24,11 +28,25 @@ enum Subcommands {
 fn main() {
     let opt = Opt::from_args();
     let Subcommands::Other(cmd) = opt.command;
-    let mut ticks = Vec::new();
+	let mut ticks = Vec::new();
+	let pool = ThreadPool::new(opt.concurrency as usize);
+	let (tx, rx) = channel();
+
     for _x in 0..opt.repetitions {
-        let elapsed = run_command(&cmd, opt.quiet);
-        ticks.push(elapsed);
-    }
+		let tx = tx.clone();
+		let cmd = cmd.clone();
+		let quiet = opt.quiet.clone();
+		pool.execute(move || {
+			let elapsed = run_command(&cmd, quiet);
+			tx.send(elapsed).expect("Could not send to channel");
+		})
+	}
+	
+	drop(tx);
+	for t in rx.iter() {
+		let elapsed = t;
+		ticks.push(elapsed);
+	}
 
     ticks.sort();
 
