@@ -12,4 +12,4 @@ Arguments:
 
 `-h` Display a histogram.
 
-`-c` Run commands concurrently.
+`-c` Number of concurrent executions.

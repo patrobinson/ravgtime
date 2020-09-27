@@ -7,15 +7,15 @@ use std::sync::mpsc::channel;
 
 #[derive(StructOpt, PartialEq, Debug)]
 struct Opt {
-    #[structopt(short, required=false, default_value="1")]
+    #[structopt(short, required=false, default_value="1", help="Number of times to run a command")]
 	repetitions: u32,
-	#[structopt(short, required=false, default_value="1")]
+	#[structopt(short, required=false, default_value="1", help="Number of concurrent executions")]
 	concurrency: u32,
-    #[structopt(short)]
-    quiet: bool,
-    #[structopt(short)]
+    #[structopt(short, help="Pipe command stdout and stderr to /dev/null")]
+	quiet: bool,
+    #[structopt(short, help="Display a histogram")]
 	histogram: bool,
-    #[structopt(subcommand)]
+    #[structopt(subcommand, help="Command to run")]
     command: Subcommands,
 }
 
