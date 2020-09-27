@@ -113,12 +113,19 @@ fn main() {
             histogram.insert(*bin, *count);
         }
 
+        let keys: Vec<&u128> = histogram.keys().collect::<Vec<&u128>>();
+        let mut sorted_keys = Vec::new();
+        for key in keys {
+            sorted_keys.push(key);
+        }
+        sorted_keys.sort();
         println!("Histogram:");
         println!("time:	count	normalized bar");
-        for (rounded_time,count) in &mut histogram {
+        for rounded_time in sorted_keys {
+            let count = histogram[rounded_time];
             let msecs = *rounded_time * rounding_quotient;
-            let bars = "#".repeat((*count * 40 / max_freq) as usize);
-            println!("{}ms	{}	{}", msecs, *count, bars)
+            let bars = "#".repeat((count * 40 / max_freq) as usize);
+            println!("{}ms	{}	{}", msecs, count, bars)
         }
     }
 }
