@@ -77,7 +77,7 @@ fn main() {
         let i2 = ticks[p99_index as usize + 1];
         (i1 + i2) / 2
     } else {
-        ticks[p95_index.ceil() as usize]
+        ticks[p99_index.ceil() as usize]
     };
 
     println!("Total time: {}ms", sum);
