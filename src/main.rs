@@ -91,9 +91,11 @@ fn main() {
 
     if opt.histogram {
         let rounding_quotient = match *min.unwrap() {
-            0..=100_000 => 1,
-            100_001..=1_000_000 => 10,
-            1_000_001..=std::u128::MAX => 100,
+            0..=1_000 => 1,
+            1_001..=10_000 => 10,
+            10_001..=100_000 => 100,
+            100_001..=1_000_000 => 1000,
+            1_000_001..=std::u128::MAX => 10000,
         };
         let mut frequencies: HashMap<u128, u128> = HashMap::new();
         let mut max_freq = 0;
