@@ -13,3 +13,18 @@ Arguments:
 `-h` Display a histogram.
 
 `-c` Number of concurrent executions.
+
+
+Usage:
+
+```sh
+$ avgtime -r5 "sleep 1"
+Total time: 5064ms
+Repetitions: 5
+Average time: 1012ms
+Min: 1008ms
+Max: 1022ms
+Standard deviation: 40.60788
+p95: 1022ms
+p99: 1022ms
+```
